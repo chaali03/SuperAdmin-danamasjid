@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { router } from '@inertiajs/react';
+import AuthLayout from '@/Layouts/AuthLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,18 +29,19 @@ export default function ForgotPassword({ status }: { status?: string }) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
+    <AuthLayout>
+      <Card className="border-0 shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Lupa Password</CardTitle>
-          <CardDescription>
-            Masukkan email Anda dan kami akan mengirimkan link reset password
+          <CardTitle className="text-3xl font-bold">Lupa Password?</CardTitle>
+          <CardDescription className="text-base">
+            Masukkan email Anda dan kami akan mengirimkan link untuk reset
+            password
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {status && (
-              <div className="rounded-md bg-green-50 p-4 text-sm text-green-800">
+              <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-800">
                 {status}
               </div>
             )}
@@ -52,6 +54,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-11"
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
@@ -59,17 +62,23 @@ export default function ForgotPassword({ status }: { status?: string }) {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+            >
               Kirim Link Reset Password
             </Button>
-            <div className="text-center text-sm">
-              <a href="/login" className="text-blue-600 hover:underline">
+            <div className="text-center text-sm text-gray-600">
+              <a
+                href="/login"
+                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+              >
                 Kembali ke login
               </a>
             </div>
           </CardFooter>
         </form>
       </Card>
-    </div>
+    </AuthLayout>
   );
 }

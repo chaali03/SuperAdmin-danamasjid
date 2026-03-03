@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { router } from '@inertiajs/react';
+import AuthLayout from '@/Layouts/AuthLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,12 +31,12 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
+    <AuthLayout>
+      <Card className="border-0 shadow-xl">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
-          <CardDescription>
-            Masukkan email dan password untuk login
+          <CardTitle className="text-3xl font-bold">Selamat Datang</CardTitle>
+          <CardDescription className="text-base">
+            Masukkan kredensial Anda untuk mengakses dashboard
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -49,6 +50,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-11"
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
@@ -59,45 +61,56 @@ export default function Login() {
               <Input
                 id="password"
                 type="password"
+                placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="h-11"
               />
               {errors.password && (
                 <p className="text-sm text-red-500">{errors.password}</p>
               )}
             </div>
-            <div className="flex items-center space-x-2">
-              <input
-                id="remember"
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300"
-              />
-              <Label htmlFor="remember" className="font-normal">
-                Ingat saya
-              </Label>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
-            <div className="flex justify-between text-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <input
+                  id="remember"
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                />
+                <Label htmlFor="remember" className="font-normal">
+                  Ingat saya
+                </Label>
+              </div>
               <a
                 href="/forgot-password"
-                className="text-blue-600 hover:underline"
+                className="text-sm text-emerald-600 hover:text-emerald-700 hover:underline"
               >
                 Lupa password?
               </a>
-              <a href="/register" className="text-blue-600 hover:underline">
-                Daftar akun baru
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <Button
+              type="submit"
+              className="h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+            >
+              Login
+            </Button>
+            <div className="text-center text-sm text-gray-600">
+              Belum punya akun?{' '}
+              <a
+                href="/register"
+                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+              >
+                Daftar sekarang
               </a>
             </div>
           </CardFooter>
         </form>
       </Card>
-    </div>
+    </AuthLayout>
   );
 }
