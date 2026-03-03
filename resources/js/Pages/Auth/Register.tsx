@@ -33,9 +33,11 @@ export default function Register() {
 
   return (
     <AuthLayout>
-      <Card className="border-0 shadow-xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold">Buat Akun Baru</CardTitle>
+      <Card className="border-0 bg-white shadow-2xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-4xl font-bold text-gray-900">
+            Buat Akun Baru
+          </CardTitle>
           <CardDescription className="text-base">
             Daftar untuk mengakses platform Dana Masjid
           </CardDescription>
@@ -103,7 +105,7 @@ export default function Register() {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+              className="h-12 w-full bg-gray-900 text-base font-semibold text-white hover:bg-gray-800"
             >
               Daftar Sekarang
             </Button>
@@ -111,7 +113,7 @@ export default function Register() {
               Sudah punya akun?{' '}
               <a
                 href="/login"
-                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+                className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
               >
                 Login di sini
               </a>

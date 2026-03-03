@@ -32,9 +32,11 @@ export default function Login() {
 
   return (
     <AuthLayout>
-      <Card className="border-0 shadow-xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold">Selamat Datang</CardTitle>
+      <Card className="border-0 bg-white shadow-2xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-4xl font-bold text-gray-900">
+            Selamat Datang
+          </CardTitle>
           <CardDescription className="text-base">
             Masukkan kredensial Anda untuk mengakses dashboard
           </CardDescription>
@@ -78,7 +80,7 @@ export default function Login() {
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <Label htmlFor="remember" className="font-normal">
                   Ingat saya
@@ -86,7 +88,7 @@ export default function Login() {
               </div>
               <a
                 href="/forgot-password"
-                className="text-sm text-emerald-600 hover:text-emerald-700 hover:underline"
+                className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
               >
                 Lupa password?
               </a>
@@ -95,7 +97,7 @@ export default function Login() {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+              className="h-12 w-full bg-gray-900 text-base font-semibold text-white hover:bg-gray-800"
             >
               Login
             </Button>
@@ -103,7 +105,7 @@ export default function Login() {
               Belum punya akun?{' '}
               <a
                 href="/register"
-                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+                className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
               >
                 Daftar sekarang
               </a>

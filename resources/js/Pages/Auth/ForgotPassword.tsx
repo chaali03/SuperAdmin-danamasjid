@@ -30,9 +30,11 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
   return (
     <AuthLayout>
-      <Card className="border-0 shadow-xl">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-3xl font-bold">Lupa Password?</CardTitle>
+      <Card className="border-0 bg-white shadow-2xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-4xl font-bold text-gray-900">
+            Lupa Password?
+          </CardTitle>
           <CardDescription className="text-base">
             Masukkan email Anda dan kami akan mengirimkan link untuk reset
             password
@@ -41,7 +43,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             {status && (
-              <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-800">
+              <div className="rounded-lg bg-blue-50 p-4 text-sm text-blue-800">
                 {status}
               </div>
             )}
@@ -64,14 +66,14 @@ export default function ForgotPassword({ status }: { status?: string }) {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="h-11 w-full bg-emerald-600 hover:bg-emerald-700"
+              className="h-12 w-full bg-gray-900 text-base font-semibold text-white hover:bg-gray-800"
             >
               Kirim Link Reset Password
             </Button>
             <div className="text-center text-sm text-gray-600">
               <a
                 href="/login"
-                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline"
+                className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
               >
                 Kembali ke login
               </a>
