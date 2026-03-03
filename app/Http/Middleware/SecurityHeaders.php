@@ -30,7 +30,7 @@ class SecurityHeaders
         // Permissions Policy
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
 
-        // Only apply strict CSP and HSTS in production
+        // Only apply strict security headers in production
         if (app()->environment('production')) {
             // Strict Transport Security (HTTPS only)
             $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
@@ -46,18 +46,8 @@ class SecurityHeaders
 
             $response->headers->set('Content-Security-Policy', $csp);
         }
-        // In development, use relaxed CSP to allow Vite dev server
-        else {
-            $csp = "default-src 'self'; ";
-            $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173 http://localhost:5174 http://127.0.0.1:5173 http://127.0.0.1:5174; ";
-            $csp .= "style-src 'self' 'unsafe-inline'; ";
-            $csp .= "img-src 'self' data: https: blob:; ";
-            $csp .= "font-src 'self' data:; ";
-            $csp .= "connect-src 'self' ws://localhost:5173 ws://localhost:5174 ws://127.0.0.1:5173 ws://127.0.0.1:5174 http://localhost:5173 http://localhost:5174 http://127.0.0.1:5173 http://127.0.0.1:5174; ";
-            $csp .= "frame-ancestors 'self';";
-
-            $response->headers->set('Content-Security-Policy', $csp);
-        }
+        // In development, don't set CSP to avoid blocking Vite dev server
+        // CSP will be enforced in production only
 
         return $response;
     }
