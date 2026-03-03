@@ -24,11 +24,21 @@ class SecurityHeaders
         // Enable XSS protection
         $response->headers->set('X-XSS-Protection', '1; mode=block');
 
-        // Strict Transport Security (HTTPS only)
-        $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        // Strict Transport Security (HTTPS only) - only in production
+        if (app()->environment('production')) {
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        }
 
-        // Content Security Policy
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'");
+        // Content Security Policy - allow localhost for development
+        $csp = "default-src 'self'; ";
+        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:* http://[::1]:*; ";
+        $csp .= "style-src 'self' 'unsafe-inline'; ";
+        $csp .= "img-src 'self' data: https: blob:; ";
+        $csp .= "font-src 'self' data:; ";
+        $csp .= "connect-src 'self' ws://localhost:* ws://127.0.0.1:* ws://[::1]:* http://localhost:* http://127.0.0.1:* http://[::1]:*; ";
+        $csp .= "frame-ancestors 'self';";
+
+        $response->headers->set('Content-Security-Policy', $csp);
 
         // Referrer Policy
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
