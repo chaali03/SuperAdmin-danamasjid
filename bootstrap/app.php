@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\LogSecurityEvents::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
