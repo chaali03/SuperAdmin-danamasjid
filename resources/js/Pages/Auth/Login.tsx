@@ -145,15 +145,6 @@ export default function Login() {
             >
               Login
             </Button>
-            <div className="text-center text-sm text-gray-600">
-              Belum punya akun?{' '}
-              <a
-                href="/register"
-                className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
-              >
-                Daftar sekarang
-              </a>
-            </div>
           </CardFooter>
         </form>
       </Card>

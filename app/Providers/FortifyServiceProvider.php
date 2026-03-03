@@ -37,7 +37,8 @@ class FortifyServiceProvider extends ServiceProvider
 
         // Inertia views
         Fortify::loginView(fn () => inertia('Auth/Login'));
-        Fortify::registerView(fn () => inertia('Auth/Register'));
+        // Registration disabled - only admin can create users
+        // Fortify::registerView(fn () => inertia('Auth/Register'));
         Fortify::requestPasswordResetLinkView(fn () => inertia('Auth/ForgotPassword'));
         Fortify::resetPasswordView(fn ($request) => inertia('Auth/ResetPassword', [
             'email' => $request->email,
