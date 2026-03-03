@@ -24,27 +24,40 @@ class SecurityHeaders
         // Enable XSS protection
         $response->headers->set('X-XSS-Protection', '1; mode=block');
 
-        // Strict Transport Security (HTTPS only) - only in production
-        if (app()->environment('production')) {
-            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-        }
-
-        // Content Security Policy - allow localhost for development
-        $csp = "default-src 'self'; ";
-        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* http://127.0.0.1:* http://[::1]:*; ";
-        $csp .= "style-src 'self' 'unsafe-inline'; ";
-        $csp .= "img-src 'self' data: https: blob:; ";
-        $csp .= "font-src 'self' data:; ";
-        $csp .= "connect-src 'self' ws://localhost:* ws://127.0.0.1:* ws://[::1]:* http://localhost:* http://127.0.0.1:* http://[::1]:*; ";
-        $csp .= "frame-ancestors 'self';";
-
-        $response->headers->set('Content-Security-Policy', $csp);
-
         // Referrer Policy
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
         // Permissions Policy
         $response->headers->set('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+
+        // Only apply strict CSP and HSTS in production
+        if (app()->environment('production')) {
+            // Strict Transport Security (HTTPS only)
+            $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+
+            // Content Security Policy - strict for production
+            $csp = "default-src 'self'; ";
+            $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval'; ";
+            $csp .= "style-src 'self' 'unsafe-inline'; ";
+            $csp .= "img-src 'self' data: https: blob:; ";
+            $csp .= "font-src 'self' data:; ";
+            $csp .= "connect-src 'self'; ";
+            $csp .= "frame-ancestors 'self';";
+
+            $response->headers->set('Content-Security-Policy', $csp);
+        }
+        // In development, use relaxed CSP to allow Vite dev server
+        else {
+            $csp = "default-src 'self'; ";
+            $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173 http://localhost:5174 http://127.0.0.1:5173 http://127.0.0.1:5174; ";
+            $csp .= "style-src 'self' 'unsafe-inline'; ";
+            $csp .= "img-src 'self' data: https: blob:; ";
+            $csp .= "font-src 'self' data:; ";
+            $csp .= "connect-src 'self' ws://localhost:5173 ws://localhost:5174 ws://127.0.0.1:5173 ws://127.0.0.1:5174 http://localhost:5173 http://localhost:5174 http://127.0.0.1:5173 http://127.0.0.1:5174; ";
+            $csp .= "frame-ancestors 'self';";
+
+            $response->headers->set('Content-Security-Policy', $csp);
+        }
 
         return $response;
     }
