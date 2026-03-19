@@ -38,6 +38,9 @@ export default function Register() {
     <AuthLayout>
       <Card className="border-0 bg-white shadow-2xl">
         <CardHeader className="space-y-1 text-center">
+          <div className="mb-2 flex justify-center">
+            <img src="/logo.webp" alt="DanaMasjid" className="h-16 w-auto" />
+          </div>
           <CardTitle className="text-4xl font-bold text-gray-900">
             Buat Akun Baru
           </CardTitle>

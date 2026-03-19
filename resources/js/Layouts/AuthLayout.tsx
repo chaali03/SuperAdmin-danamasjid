@@ -14,7 +14,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       <div className="absolute right-0 top-0 h-full w-1/2 bg-[#FFC107]"></div>
 
       {/* Card putih di tengah */}
-      <div className="relative z-10 w-full max-w-xl px-6">
+      <div className="relative z-10 w-full max-w-xl px-6 py-8">
         {children}
       </div>
     </div>

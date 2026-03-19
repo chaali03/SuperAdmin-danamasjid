@@ -39,12 +39,20 @@ export default function ResetPassword({ email, token }: ResetPasswordProps) {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Reset Password</CardTitle>
-          <CardDescription>Masukkan password baru Anda</CardDescription>
-        </CardHeader>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      {/* Background */}
+      <div className="absolute left-0 top-0 h-full w-1/2 bg-blue-600"></div>
+      <div className="absolute right-0 top-0 h-full w-1/2 bg-[#FFC107]"></div>
+
+      <div className="relative z-10 w-full max-w-xl px-6 py-8">
+        <Card className="border-0 bg-white shadow-2xl">
+          <CardHeader className="space-y-1 text-center">
+            <div className="mb-2 flex justify-center">
+              <img src="/logo.webp" alt="DanaMasjid" className="h-16 w-auto" />
+            </div>
+            <CardTitle className="text-4xl font-bold text-gray-900">Reset Password</CardTitle>
+            <CardDescription className="text-base">Masukkan password baru Anda</CardDescription>
+          </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -84,12 +92,13 @@ export default function ResetPassword({ email, token }: ResetPasswordProps) {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="h-12 w-full bg-gray-900 text-base font-semibold text-white hover:bg-gray-800">
               Reset Password
             </Button>
           </CardFooter>
         </form>
       </Card>
+      </div>
     </div>
   );
 }
