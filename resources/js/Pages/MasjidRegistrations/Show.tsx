@@ -3,7 +3,7 @@ import { Link, router } from '@inertiajs/react';
 import { useState, useRef } from 'react';
 import {
   CheckCircle2, XCircle, AlertCircle, Eye, X,
-  Building2, FileText, Users, ShieldCheck, ChevronDown, ChevronUp
+  Building2, FileText, Users, ShieldCheck, ChevronDown, ChevronUp, Trash2
 } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -18,11 +18,12 @@ interface FieldFeedback {
 interface Registration {
   id: string;
   mosqueName: string; mosqueAddress: string; province: string; regency: string;
-  district: string; village: string; postalCode: string; mosqueImage: string | null;
+  district: string; village: string; rt: string; rw: string; mosqueImage: string | null;
   aktaPendirian: string | null; skKemenkumham: string | null; npwpMasjid: string | null;
-  namaDepan: string; namaBelakang: string; jenisKelamin: string; pekerjaan: string;
+  suratPernyataan: string | null;
+  namaLengkap: string; namaDepan: string; namaBelakang: string; jenisKelamin: string; pekerjaan: string;
   emailPerwakilan: string; tanggalLahir: string; nomorHandphone: string;
-  alamatTempat: string; nomorKTP: string; fotoKTP: string | null;
+  alamatTempat: string; nomorKTP: string; fotoKTP: string | null; imageKTP: string | null; jenisID: string;
   skKepengurusan: string | null; suratRekomendasiRTRW: string | null;
   fotoTampakDepan: string | null; fotoInterior: string | null;
   dokumenStatusTanah: string | null; ktpKetua: string | null; npwpDokumen: string | null;
@@ -49,17 +50,27 @@ const statusBadge = (s: string) => {
 };
 
 const isImageUrl = (url: string | null) =>
-  url && /\.(jpg|jpeg|png|webp|gif)$/i.test(url);
+  url && /^https?:\/\//i.test(url) && /\.(jpg|jpeg|png|webp|gif)$/i.test(url);
+
+// Also handle internal /api/files/[id] URLs served from Next.js
+const isViewableFile = (url: string | null) =>
+  url && (isImageUrl(url) || /\/api\/files\/[a-f0-9-]+$/i.test(url));
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
+// Resolve /api/files/[id] URLs to the Next.js app origin
+const NEXTJS_URL = (import.meta as any).env?.VITE_NEXTJS_URL || 'http://localhost:3000'
+const resolveFileUrl = (url: string) =>
+  url.startsWith('/api/files/') ? `${NEXTJS_URL}${url}` : url
+
 function ImagePreviewModal({ url, onClose }: { url: string; onClose: () => void }) {
+  const src = resolveFileUrl(url)
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4" onClick={onClose}>
       <button className="absolute right-4 top-4 rounded-full bg-white/20 p-2 hover:bg-white/30" onClick={onClose}>
         <X className="h-5 w-5 text-white" />
       </button>
-      <img src={url} alt="preview" className="max-h-[90vh] max-w-full rounded-lg object-contain" onClick={e => e.stopPropagation()} />
+      <img src={src} alt="preview" className="max-h-[90vh] max-w-full rounded-lg object-contain" onClick={e => e.stopPropagation()} />
     </div>
   );
 }
@@ -149,7 +160,7 @@ function FieldRow({
             value ? (
               <div className="mt-0.5 flex items-center gap-2">
                 <span className="truncate text-sm text-gray-900">{value.split('/').pop()}</span>
-                {isImageUrl(value) && (
+                {isViewableFile(value) && (
                   <button type="button" onClick={() => setPreviewUrl(value)} className="shrink-0 rounded p-0.5 hover:bg-gray-100">
                     <Eye className="h-4 w-4 text-blue-500" />
                   </button>
@@ -269,6 +280,7 @@ export default function Show({ auth, registration }: Props) {
   );
   const [submitting, setSubmitting] = useState(false);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [globalReason, setGlobalReason] = useState(registration.rejectionReason ?? '');
 
   const updateField = (key: string, fb: FieldFeedback | undefined) => {
@@ -300,6 +312,12 @@ export default function Show({ auth, registration }: Props) {
     }, { onFinish: () => { setSubmitting(false); setShowRejectConfirm(false); } });
   };
 
+  const handleDelete = () => {
+    router.delete(`/masjid-registrations/${registration.id}`, {
+      onFinish: () => setShowDeleteConfirm(false),
+    });
+  };
+
   const fieldProps = (key: string, label: string, value: string | null | undefined, isFile = false) => ({
     fieldKey: key, label, value, isFile, feedback: fieldFeedback[key], onChange: updateField, readonly,
   });
@@ -323,18 +341,26 @@ export default function Show({ auth, registration }: Props) {
             <span className={`rounded-full px-3 py-1 text-sm font-semibold capitalize ${statusBadge(registration.status)}`}>
               {registration.status}
             </span>
-            {!readonly && (
-              <div className="flex gap-2">
-                <button onClick={handleApprove}
-                  className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
-                  Setujui
+            <div className="flex gap-2">
+              {!readonly && (
+                <>
+                  <button onClick={handleApprove}
+                    className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700">
+                    Setujui
+                  </button>
+                  <button onClick={() => setShowRejectConfirm(true)}
+                    className="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">
+                    Tolak
+                  </button>
+                </>
+              )}
+              {readonly && (
+                <button onClick={() => setShowDeleteConfirm(true)}
+                  className="flex items-center gap-1.5 rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">
+                  <Trash2 className="h-4 w-4" /> Hapus
                 </button>
-                <button onClick={() => setShowRejectConfirm(true)}
-                  className="rounded-lg border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50">
-                  Tolak
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
 
@@ -357,45 +383,36 @@ export default function Show({ auth, registration }: Props) {
         {/* ── Data Masjid ── */}
         <SectionCard title="Data Masjid" icon={Building2} color="bg-blue-600">
           <FieldRow {...fieldProps('mosqueName', 'Nama Masjid', registration.mosqueName)} />
+          <FieldRow {...fieldProps('mosqueImage', 'Foto Masjid', registration.mosqueImage, true)} />
           <FieldRow {...fieldProps('mosqueAddress', 'Alamat Lengkap', registration.mosqueAddress)} />
           <FieldRow {...fieldProps('province', 'Provinsi', registration.province)} />
           <FieldRow {...fieldProps('regency', 'Kota/Kabupaten', registration.regency)} />
           <FieldRow {...fieldProps('district', 'Kecamatan', registration.district)} />
           <FieldRow {...fieldProps('village', 'Kelurahan/Desa', registration.village)} />
-          <FieldRow {...fieldProps('postalCode', 'Kode Pos', registration.postalCode)} />
-          <FieldRow {...fieldProps('mosqueImage', 'Foto Masjid', registration.mosqueImage, true)} />
+          <FieldRow {...fieldProps('rt', 'RT', registration.rt)} />
+          <FieldRow {...fieldProps('rw', 'RW', registration.rw)} />
         </SectionCard>
 
         {/* ── Data Legalitas ── */}
         <SectionCard title="Data Legalitas" icon={FileText} color="bg-emerald-600">
           <FieldRow {...fieldProps('aktaPendirian', 'Akta Pendirian', registration.aktaPendirian, true)} />
           <FieldRow {...fieldProps('skKemenkumham', 'SK Kemenkumham', registration.skKemenkumham, true)} />
-          <FieldRow {...fieldProps('npwpMasjid', 'NPWP Masjid', registration.npwpMasjid, true)} />
+          <FieldRow {...fieldProps('npwpDokumen', 'Dokumen NPWP', registration.npwpDokumen, true)} />
+          <FieldRow {...fieldProps('suratPernyataan', 'Surat Pernyataan Pendirian', registration.suratPernyataan, true)} />
         </SectionCard>
 
         {/* ── Perwakilan Resmi ── */}
         <SectionCard title="Perwakilan Resmi" icon={Users} color="bg-purple-600">
-          <FieldRow {...fieldProps('namaDepan', 'Nama Depan', registration.namaDepan)} />
-          <FieldRow {...fieldProps('namaBelakang', 'Nama Belakang', registration.namaBelakang)} />
+          <FieldRow {...fieldProps('jenisID', 'Jenis ID', registration.jenisID ?? 'KTP')} />
+          <FieldRow {...fieldProps('fotoKTP', `Foto ${registration.jenisID ?? 'KTP'}`, registration.fotoKTP, true)} />
+          <FieldRow {...fieldProps('imageKTP', `Selfie memegang ${registration.jenisID ?? 'KTP'}`, registration.imageKTP, true)} />
+          <FieldRow {...fieldProps('namaLengkap', 'Nama Lengkap', registration.namaLengkap || `${registration.namaDepan} ${registration.namaBelakang}`.trim())} />
           <FieldRow {...fieldProps('jenisKelamin', 'Jenis Kelamin', registration.jenisKelamin)} />
           <FieldRow {...fieldProps('pekerjaan', 'Pekerjaan', registration.pekerjaan)} />
           <FieldRow {...fieldProps('emailPerwakilan', 'Email', registration.emailPerwakilan)} />
           <FieldRow {...fieldProps('tanggalLahir', 'Tanggal Lahir', registration.tanggalLahir)} />
-          <FieldRow {...fieldProps('nomorHandphone', 'No. Handphone', registration.nomorHandphone)} />
+          <FieldRow {...fieldProps('nomorHandphone', 'Nomor Handphone', registration.nomorHandphone)} />
           <FieldRow {...fieldProps('alamatTempat', 'Alamat Tempat Tinggal', registration.alamatTempat)} />
-          <FieldRow {...fieldProps('nomorKTP', 'Nomor KTP', registration.nomorKTP)} />
-          <FieldRow {...fieldProps('fotoKTP', 'Foto KTP', registration.fotoKTP, true)} />
-        </SectionCard>
-
-        {/* ── Dokumen Pendukung ── */}
-        <SectionCard title="Dokumen Pendukung" icon={ShieldCheck} color="bg-orange-500">
-          <FieldRow {...fieldProps('skKepengurusan', 'SK Kepengurusan', registration.skKepengurusan, true)} />
-          <FieldRow {...fieldProps('suratRekomendasiRTRW', 'Surat Rekomendasi RT/RW', registration.suratRekomendasiRTRW, true)} />
-          <FieldRow {...fieldProps('fotoTampakDepan', 'Foto Tampak Depan', registration.fotoTampakDepan, true)} />
-          <FieldRow {...fieldProps('fotoInterior', 'Foto Interior', registration.fotoInterior, true)} />
-          <FieldRow {...fieldProps('dokumenStatusTanah', 'Dokumen Status Tanah', registration.dokumenStatusTanah, true)} />
-          <FieldRow {...fieldProps('ktpKetua', 'KTP Ketua', registration.ktpKetua, true)} />
-          <FieldRow {...fieldProps('npwpDokumen', 'NPWP Dokumen', registration.npwpDokumen, true)} />
         </SectionCard>
 
         {/* ── Akun Admin ── */}
@@ -408,6 +425,33 @@ export default function Show({ auth, registration }: Props) {
             </div>
           )}
         </SectionCard>
+
+        {/* ── Delete confirm modal ── */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                  <Trash2 className="h-5 w-5 text-red-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">Hapus Pendaftaran</h3>
+              </div>
+              <p className="text-sm text-gray-600">
+                Apakah Anda yakin ingin menghapus pendaftaran <strong>{registration.mosqueName}</strong>? Tindakan ini tidak dapat dibatalkan.
+              </p>
+              <div className="mt-5 flex gap-2">
+                <button onClick={handleDelete}
+                  className="flex-1 rounded-lg bg-red-600 py-2 text-sm font-semibold text-white hover:bg-red-700">
+                  Ya, Hapus
+                </button>
+                <button onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 rounded-lg border py-2 text-sm hover:bg-gray-50">
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Reject confirm modal ── */}
         {showRejectConfirm && (

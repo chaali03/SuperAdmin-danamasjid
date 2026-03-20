@@ -20,8 +20,6 @@ class MasjidRegistration extends Model
     const UPDATED_AT = 'updatedAt';
 
     protected $casts = [
-        'isPemilikBisnis'  => 'boolean',
-        'kontakPersonSama' => 'boolean',
         'fieldFeedback'    => 'array',
         'approvedAt'       => 'datetime',
         'createdAt'        => 'datetime',
@@ -30,14 +28,11 @@ class MasjidRegistration extends Model
 
     protected $fillable = [
         'userId', 'mosqueName', 'mosqueAddress', 'province', 'regency',
-        'district', 'village', 'postalCode', 'mosqueImage',
-        'aktaPendirian', 'skKemenkumham', 'npwpMasjid',
-        'namaDepan', 'namaBelakang', 'jenisKelamin', 'pekerjaan',
-        'isPemilikBisnis', 'emailPerwakilan', 'tanggalLahir', 'nomorHandphone',
-        'alamatTempat', 'jenisID', 'fotoKTP', 'nomorKTP', 'suratKuasa',
-        'kontakPersonSama', 'skKepengurusan', 'suratRekomendasiRTRW',
-        'fotoTampakDepan', 'fotoInterior', 'dokumenStatusTanah', 'ktpKetua',
-        'npwpDokumen', 'adminEmail', 'adminPassword', 'status',
+        'district', 'village', 'rt', 'rw', 'mosqueImage',
+        'aktaPendirian', 'skKemenkumham', 'npwpDokumen', 'suratPernyataan',
+        'jenisID', 'fotoKTP', 'imageKTP', 'namaLengkap', 'jenisKelamin', 'pekerjaan',
+        'emailPerwakilan', 'tanggalLahir', 'nomorHandphone', 'alamatTempat',
+        'adminEmail', 'adminPassword', 'status',
         'rejectionReason', 'fieldFeedback', 'approvedAt', 'approvedBy',
     ];
 
@@ -55,12 +50,6 @@ class MasjidRegistration extends Model
     }
 
     // ─── Accessors ──────────────────────────────────────────────────────────
-
-    /** Nama lengkap perwakilan */
-    public function getNamaLengkapAttribute(): string
-    {
-        return trim("{$this->namaDepan} {$this->namaBelakang}");
-    }
 
     /** Alamat lengkap (kecamatan, kota, provinsi) */
     public function getAlamatLengkapAttribute(): string

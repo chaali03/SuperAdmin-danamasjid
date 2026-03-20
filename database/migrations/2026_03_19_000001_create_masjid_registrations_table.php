@@ -25,15 +25,18 @@ return new class extends Migration
                 $table->string('regency');
                 $table->string('district');
                 $table->string('village');
-                $table->string('postalCode')->nullable();
+                $table->string('rt')->default('');
+                $table->string('rw')->default('');
                 $table->string('mosqueImage')->nullable();
 
                 // Step 2: Data Legalitas
                 $table->string('aktaPendirian')->nullable();
                 $table->string('skKemenkumham')->nullable();
                 $table->string('npwpMasjid')->nullable();
+                $table->string('suratPernyataan')->nullable();
 
                 // Step 3: Data Pengurus
+                $table->string('namaLengkap')->default('');
                 $table->string('namaDepan');
                 $table->string('namaBelakang');
                 $table->string('jenisKelamin');

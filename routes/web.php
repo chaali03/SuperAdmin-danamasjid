@@ -22,5 +22,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{id}', [MasjidRegistrationController::class, 'show'])->name('show');
         Route::post('/{id}/approve', [MasjidRegistrationController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [MasjidRegistrationController::class, 'reject'])->name('reject');
+        Route::delete('/{id}', [MasjidRegistrationController::class, 'destroy'])->name('destroy');
     });
 });

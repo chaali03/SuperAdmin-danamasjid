@@ -89,6 +89,19 @@ class MasjidRegistrationController extends Controller
         return back()->with('success', "Pendaftaran {$registration->mosqueName} telah ditolak.");
     }
 
+    public function destroy(string $id)
+    {
+        $registration = MasjidRegistration::findOrFail($id);
+        $name = $registration->mosqueName;
+
+        $registration->delete();
+
+        ActivityLog::log('delete_registration', "Deleted mosque registration: {$name}");
+
+        return redirect()->route('masjid-registrations.index')
+            ->with('success', "Pendaftaran {$name} telah dihapus.");
+    }
+
     /**
      * Kirim email status ke user via Next.js API (Resend).
      */
